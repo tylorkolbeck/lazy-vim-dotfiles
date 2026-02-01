@@ -2,6 +2,9 @@ return {
   -- Core DAP + Codelldb config
   {
     "mfussenegger/nvim-dap",
+    dependencies = {
+      "leoluz/nvim-dap-go",
+    },
     keys = {
       {
         "<leader>db",
@@ -97,6 +100,39 @@ return {
 
       dap.configurations.c = dap.configurations.cpp
       dap.configurations.rust = dap.configurations.cpp
+      -- Go (Delve)
+      require("dap-go").setup()
+
+      -- Optional: explicitly define configurations (dap-go usually adds these)
+      dap.configurations.go = dap.configurations.go
+        or {
+          {
+            type = "go",
+            name = "Debug File",
+            request = "launch",
+            program = "${file}",
+          },
+          {
+            type = "go",
+            name = "Debug Package",
+            request = "launch",
+            program = "${workspaceFolder}",
+          },
+          {
+            type = "go",
+            name = "Debug Test (File)",
+            request = "launch",
+            mode = "test",
+            program = "${file}",
+          },
+          {
+            type = "go",
+            name = "Debug Test (Package)",
+            request = "launch",
+            mode = "test",
+            program = "${workspaceFolder}",
+          },
+        }
     end,
   },
 
