@@ -71,31 +71,25 @@ return {
           type = "codelldb",
           request = "launch",
 
-          program = "${workspaceFolder}/build/debug/src/debug",
+          program = function()
+            local cwd = vim.fn.getcwd()
+            local target = vim.fn.fnamemodify(cwd, ":t") -- "tk-engine"
+            local build_dir = cwd .. "/build/debug"
 
-          cwd = "${workspaceFolder}",
-          stopOnEntry = false,
-          args = {},
+            -- Prefer an exact-name match anywhere under build/debug, excluding CMake internals
+            local matches = vim.fn.glob(build_dir .. "/**/" .. target, false, true)
 
-          preLaunchTask = function()
-            return {
-              type = "shell",
-              command = "cmake --build build/debug",
-            }
+            for _, p in ipairs(matches) do
+              if vim.fn.executable(p) == 1 and not p:match("/CMakeFiles/") then
+                vim.notify("DAP launching: " .. p)
+                return p
+              end
+            end
+
+            -- Fallback: prompt
+            return vim.fn.input("Executable: ", build_dir .. "/", "file")
           end,
         },
-        -- {
-        --   name = "Launch (codelldb)",
-        --   type = "codelldb",
-        --   request = "launch",
-        --   program = "${workspaceFolder}/build/debug/src/debug",
-        --   -- program = function()
-        --   --   return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
-        --   -- end,
-        --   cwd = "${workspaceFolder}",
-        --   stopOnEntry = false,
-        --   args = {},
-        -- },
       }
 
       dap.configurations.c = dap.configurations.cpp
