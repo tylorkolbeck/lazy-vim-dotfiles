@@ -9,6 +9,20 @@ return {
     },
     keys = {
       {
+        "<leader>dq",
+        function()
+          require("dap").terminate()
+        end,
+        desc = "Terminate Debug Session",
+      },
+      {
+        "<leader>dL",
+        function()
+          require("dap").run(require("dap").configurations.go[15]) -- Or by name filter
+        end,
+        desc = "Run Last/Specific Launch Config",
+      },
+      {
         "<leader>db",
         function()
           require("dap").toggle_breakpoint()
